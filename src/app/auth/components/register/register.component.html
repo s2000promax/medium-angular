@@ -9,7 +9,7 @@
         Backend errors are here
         <form
           [formGroup]="form"
-          (ngSubmit)="onSubmit"
+          (ngSubmit)="onSubmit()"
         >
           <fieldset>
             <fieldset class="form-group">
@@ -39,6 +39,7 @@
             <button
               class="btn btn-lg btn-primary pull-xs-right"
               type="submit"
+              [disabled]="isSubmitting$ | async"
             >Sign up
             </button>
           </fieldset>
