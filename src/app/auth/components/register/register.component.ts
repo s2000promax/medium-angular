@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { isSubmittingSelector } from '../../store/selectors';
 import { AuthService } from '../../services/auth.service';
 import { CurrentUserInterface } from '../../../shared/types/currentUser.interface';
+import { RegisterRequestInterface } from '../../types/registerRequest.interface';
 
 @Component({
   selector: 'mc-register',
@@ -42,11 +43,9 @@ export class RegisterComponent implements OnInit {
 
   onSubmit() {
     console.log(this.form.value);
-    this.store.dispatch(registerAction(this.form.value));
-    this.authService
-      .register(this.form.value)
-      .subscribe((currentUser: CurrentUserInterface) => {
-        console.log('currentUser', currentUser);
-      });
+    const request: RegisterRequestInterface = {
+      user: this.form.value,
+    };
+    this.store.dispatch(registerAction({ request }));
   }
 }
