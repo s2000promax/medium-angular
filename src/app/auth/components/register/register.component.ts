@@ -3,10 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
 import { registerAction } from '../../store/actions/register.action';
 import { Observable } from 'rxjs';
-import { isSubmittingSelector } from '../../store/selectors';
-import { AuthService } from '../../services/auth.service';
-import { CurrentUserInterface } from '../../../shared/types/currentUser.interface';
+import {
+  isSubmittingSelector,
+  validationErrorsSelector,
+} from '../../store/selectors';
 import { RegisterRequestInterface } from '../../types/registerRequest.interface';
+import { BackendErrorsInterface } from '../../../shared/types/backendErrors.interface';
 
 @Component({
   selector: 'mc-register',
@@ -16,29 +18,29 @@ import { RegisterRequestInterface } from '../../types/registerRequest.interface'
 export class RegisterComponent implements OnInit {
   form: FormGroup;
   isSubmitting$: Observable<boolean>;
+  backendErrors$: Observable<BackendErrorsInterface | null>;
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly store: Store,
-    private readonly authService: AuthService
-  ) {
-    this.form = this.formBuilder.group({
-      username: ['', Validators.required],
-      email: ['', Validators.required],
-      password: ['', Validators.required],
-    });
-    this.isSubmitting$ = this.store.pipe(select(isSubmittingSelector));
-  }
+    private readonly store: Store
+  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
     this.initializeValues();
   }
 
-  initializeValues() {}
+  initializeValues() {
+    this.isSubmitting$ = this.store.pipe(select(isSubmittingSelector));
+    this.backendErrors$ = this.store.pipe(select(validationErrorsSelector));
+  }
 
   private initializeForm(): void {
-    console.log(this.form.valid);
+    this.form = this.formBuilder.group({
+      username: ['', Validators.required],
+      email: ['', Validators.required],
+      password: ['', Validators.required],
+    });
   }
 
   onSubmit() {
